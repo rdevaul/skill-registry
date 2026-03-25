@@ -69,9 +69,9 @@ def create_app() -> FastAPI:
         skills_list = list(state.skills.values())
 
         return templates.TemplateResponse(
-            "index.html",
-            {
-                "request": request,
+            request=request,
+            name="index.html",
+            context={
                 "title": settings.REGISTRY_TITLE,
                 "base_url": settings.REGISTRY_BASE_URL,
                 "approved_signers": approved_signers,
@@ -94,9 +94,9 @@ def create_app() -> FastAPI:
         ]
 
         return templates.TemplateResponse(
-            "admin.html",
-            {
-                "request": request,
+            request=request,
+            name="admin.html",
+            context={
                 "title": f"Admin Dashboard - {settings.REGISTRY_TITLE}",
                 "pending_identities": pending_identities,
             }
