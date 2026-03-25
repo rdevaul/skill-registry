@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>{{ title }}</h1>
+        <div class="stats-bar">
+            {{ stats.approved_signers }} signers &middot;
+            {{ stats.published_skills }} skills
+        </div>
+    </header>
+
+    <main>
+        <section class="install">
+            <h2>Install</h2>
+            <pre><code>pip install skill-signer</code></pre>
+        </section>
+
+        <section class="signers">
+            <h2>Approved Signers</h2>
+            {% if approved_signers %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Fingerprint</th>
+                        <th>Approved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for signer in approved_signers %}
+                    <tr>
+                        <td>{{ signer.name }}</td>
+                        <td>{{ signer.email }}</td>
+                        <td><code>{{ signer.key_fingerprint }}</code></td>
+                        <td>{{ signer.approved_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No approved signers yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="skills">
+            <h2>Published Skills</h2>
+            {% if skills %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Version</th>
+                        <th>Author</th>
+                        <th>Published</th>
+                        <th>Verified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for skill in skills %}
+                    <tr>
+                        <td>{{ skill.name }}</td>
+                        <td>{{ skill.version }}</td>
+                        <td>{{ skill.author_email }}</td>
+                        <td>{{ skill.published_at }}</td>
+                        <td>{% if skill.verified %}✓{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No skills published yet.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by <a href="https://github.com/anthropics/skill-registry">skill-registry</a></p>
+    </footer>
+</body>
+</html>

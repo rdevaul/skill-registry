@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <nav>
+            <a href="/">← Back to Registry</a>
+        </nav>
+    </header>
+
+    <main>
+        {% if message %}
+        <div class="message">{{ message }}</div>
+        {% endif %}
+
+        <section class="pending">
+            <h2>Pending Identity Requests</h2>
+            {% if pending_identities %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Fingerprint</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for identity in pending_identities %}
+                    <tr>
+                        <td>{{ identity.name }}</td>
+                        <td>{{ identity.email }}</td>
+                        <td><code>{{ identity.key_fingerprint[:32] }}...</code></td>
+                        <td>{{ identity.submitted_at[:10] }}</td>
+                        <td class="actions">
+                            <form method="POST" action="/admin/identities/{{ identity.id }}/approve" style="display: inline;">
+                                <button type="submit" class="btn btn-approve">Approve</button>
+                            </form>
+                            <form method="POST" action="/admin/identities/{{ identity.id }}/reject" style="display: inline;">
+                                <button type="submit" class="btn btn-reject">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No pending requests.</p>
+            {% endif %}
+        </section>
+
+        <section class="approved">
+            <h2>Approved Identities</h2>
+            {% if approved_identities %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Fingerprint</th>
+                        <th>Approved</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for identity in approved_identities %}
+                    <tr>
+                        <td>{{ identity.name }}</td>
+                        <td>{{ identity.email }}</td>
+                        <td><code>{{ identity.key_fingerprint[:32] }}...</code></td>
+                        <td>{{ identity.approved_at[:10] }}</td>
+                        <td class="actions">
+                            <form method="POST" action="/admin/identities/{{ identity.id }}/revoke" style="display: inline;">
+                                <button type="submit" class="btn btn-revoke" onclick="return confirm('Are you sure you want to revoke this identity?');">Revoke</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No approved identities yet.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by <a href="https://github.com/anthropics/skill-signer" target="_blank">skill-signer</a> &middot; MIT License</p>
+    </footer>
+</body>
+</html>

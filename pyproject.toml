@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skill-registry"
+version = "0.1.0"
+description = "A FastAPI-based registry server for cryptographically signed AI agent skills"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic[email]>=2.0",
+    "pydantic-settings>=2.0",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    "boto3>=1.34",
+    "skill-signer>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "httpx>=0.27",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
