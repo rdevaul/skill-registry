@@ -160,6 +160,19 @@ async def submit_skill(
                 detail=f"Version {skill_manifest.skill_version} of '{skill_manifest.skill_name}' already exists. Versions are immutable."
             )
 
+        # Reject namespace hijacking: skill name is owned by the first publisher
+        existing_versions = [
+            s for s in state.skills.values()
+            if s.name == skill_manifest.skill_name
+        ]
+        if existing_versions:
+            owner_email = existing_versions[0].author_email
+            if owner_email != author_email:
+                raise HTTPException(
+                    status_code=403,
+                    detail=f"Skill '{skill_manifest.skill_name}' is owned by {owner_email}. Only the original author may publish new versions."
+                )
+
         # Store package
         package_path = request.app.state.storage.store_package(
             skill_manifest.skill_name,
