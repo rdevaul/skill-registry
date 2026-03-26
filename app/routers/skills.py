@@ -152,6 +152,14 @@ async def submit_skill(
                         detail=f"Hash mismatch for {file_name}: expected {file_entry.sha256}, got {actual_hash}"
                     )
 
+        # Reject duplicate version (immutable releases)
+        skill_key = f"{skill_manifest.skill_name}@{skill_manifest.skill_version}"
+        if skill_key in state.skills:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Version {skill_manifest.skill_version} of '{skill_manifest.skill_name}' already exists. Versions are immutable."
+            )
+
         # Store package
         package_path = request.app.state.storage.store_package(
             skill_manifest.skill_name,
@@ -163,7 +171,6 @@ async def submit_skill(
         manifest_hash = compute_manifest_hash(manifest)
 
         # Create skill record
-        skill_key = f"{skill_manifest.skill_name}@{skill_manifest.skill_version}"
         record = SkillRecord(
             name=skill_manifest.skill_name,
             version=skill_manifest.skill_version,
